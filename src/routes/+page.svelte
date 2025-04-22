@@ -170,10 +170,18 @@
 		e.stopPropagation()
 		handleSend(e)
 	}
+
+	function triggerResponses() {
+		requestAnimationFrame(() => {
+			setTimeout(() => (messages = [...messages, convo[0]]), 1000)
+			setTimeout(() => (messages = [...messages, convo[1]]), 2000)
+			setTimeout(() => (messages = [...messages, convo[2]]), 3000)
+		})
+	}
 </script>
 
 <div class="feed" use:scrollLock>
-	<header class="head">Header</header>
+	<header class="head">Header <button onclick={triggerResponses}>Test receive</button></header>
 	<main class="main" class:blurring bind:this={main} use:scrollTop={[fetchMore]} use:scrollPin>
 		{#if fetching}
 			<span transition:slide>Fetching...</span>

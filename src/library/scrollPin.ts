@@ -25,7 +25,7 @@ type ScrollPinParameters = {
 // The action itself. Attach via `<div use:scrollPin={…} />`.
 export function scrollPin(node: HTMLElement, params: ScrollPinParameters = {}) {
 	// Destructure incoming params and assign defaults
-	let { threshold = 10, onPinStateChange } = params
+	let { threshold = 20, onPinStateChange } = params
 
 	// Track whether we're currently pinned (start pinned)
 	let isPinned = true
@@ -53,6 +53,12 @@ export function scrollPin(node: HTMLElement, params: ScrollPinParameters = {}) {
 		}
 	}
 
+	const handleViewportResize = () => {
+		if (isPinned) {
+			requestAnimationFrame(scrollToBottom)
+		}
+	}
+
 	// Watch for changes to content/size so we can auto-scroll if still pinned
 	const observer = new MutationObserver(() => {
 		if (isPinned && node.scrollHeight !== lastHeight) {
@@ -70,6 +76,7 @@ export function scrollPin(node: HTMLElement, params: ScrollPinParameters = {}) {
 
 	// Listen for manual scrolls
 	node.addEventListener('scroll', handleScroll, { passive: true })
+	window.visualViewport?.addEventListener('resize', handleViewportResize)
 
 	return {
 		// Allow updating threshold and callback at runtime
@@ -80,6 +87,7 @@ export function scrollPin(node: HTMLElement, params: ScrollPinParameters = {}) {
 		destroy() {
 			node.removeEventListener('scroll', handleScroll)
 			observer.disconnect()
+			window.visualViewport?.removeEventListener('resize', handleViewportResize)
 		}
 	}
 }
