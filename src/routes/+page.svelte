@@ -213,7 +213,7 @@
 		height: var(--vvh, 100svh);
 		padding: calc(4.5rem + env(safe-area-inset-top)) 1rem 4.5rem;
 		overflow: auto;
-		transition: height 0.35s ease; /* android only */
+		/* transition: height 0.35s ease; android only */
 
 		&.blurring {
 			height: 100svh;
