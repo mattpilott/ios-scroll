@@ -108,8 +108,24 @@
 	let blurring = $state(false)
 	let main = $state(null)
 	let mounted = $state(false)
+	let fetching = $state(false)
+	let end = $state(0)
 
 	onMount(() => (mounted = true))
+
+	async function fetchMore() {
+		const oldHeight = main.scrollHeight
+
+		fetching = true
+		await sleep(3000) // replace with actual fetch
+		fetching = false
+		await sleep(500)
+
+		end = end + 1 // this needs to change in real code
+		messages = end > 2 ? messages : [...convo, ...messages]
+
+		requestAnimationFrame(() => (main.scrollTop = main.scrollHeight - oldHeight))
+	}
 
 	function scrollToBottom() {
 		if (!main) return
@@ -129,21 +145,6 @@
 	function handleBlur() {
 		blurring = true
 		setTimeout(() => (blurring = false), 750)
-	}
-
-	let fetching = $state(false)
-
-	async function fetchMore() {
-		const oldHeight = main.scrollHeight
-
-		fetching = true
-		await sleep(3000) // replace with actual fetch
-		fetching = false
-		await sleep(500)
-
-		messages = [...convo, ...messages]
-
-		requestAnimationFrame(() => (main.scrollTop = main.scrollHeight - oldHeight))
 	}
 
 	function handleSend(e) {
@@ -176,6 +177,9 @@
 	<main class="main" class:blurring bind:this={main} use:scrollTop={[fetchMore]} use:scrollPin>
 		{#if fetching}
 			<span transition:slide>Fetching...</span>
+		{/if}
+		{#if end > 2}
+			<span transition:slide>End</span>
 		{/if}
 		{#each messages as message, i}
 			<div class="message">{messages.length - i}: {message}</div>
