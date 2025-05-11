@@ -33,7 +33,7 @@ export function scrollPin(node: HTMLElement, params: ScrollPinParameters = {}) {
 	let lastHeight = node.scrollHeight
 
 	// Scroll helper: snap the container to the very bottom
-	const scrollToBottom = () => {
+	const scrollToEnd = () => {
 		node.scrollTop = node.scrollHeight
 	}
 
@@ -41,7 +41,7 @@ export function scrollPin(node: HTMLElement, params: ScrollPinParameters = {}) {
 	const isAtBottom = () => node.scrollHeight - node.clientHeight - node.scrollTop <= threshold
 
 	// Kick things off by scrolling to bottom on init
-	scrollToBottom()
+	scrollToEnd()
 
 	// When the user manually scrolls, update our pinned state
 	const handleScroll = () => {
@@ -55,14 +55,14 @@ export function scrollPin(node: HTMLElement, params: ScrollPinParameters = {}) {
 
 	const handleViewportResize = () => {
 		if (isPinned) {
-			requestAnimationFrame(scrollToBottom)
+			requestAnimationFrame(scrollToEnd)
 		}
 	}
 
 	// Watch for changes to content/size so we can auto-scroll if still pinned
 	const observer = new MutationObserver(() => {
 		if (isPinned && node.scrollHeight !== lastHeight) {
-			scrollToBottom()
+			scrollToEnd()
 		}
 		lastHeight = node.scrollHeight
 	})
